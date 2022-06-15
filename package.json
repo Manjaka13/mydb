@@ -1,0 +1,17 @@
+{
+	"name": "jdb",
+	"version": "1.0.0",
+	"description": "",
+	"main": "src/index.js",
+	"scripts": {
+		"dev": "nodemon src/index.js",
+		"start": "node src/index.js"
+	},
+	"author": "Hari13 <manjaka.rajaonson@gmail.com>",
+	"license": "ISC",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.0",
+		"express": "^4.17.3"
+	}
+}
