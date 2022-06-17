@@ -13,8 +13,43 @@ const answer = (caption, payload, status) => {
 	return message;
 };
 
-// Checks if a filename is a database
-const isDatabase = (filename) =>
-	filename.match(new RegExp(/^[a-z]+.db.json$/)) ? true : false;
+// Get JDB server version
+const getJDBVersion = () => {
+	const version = process.env.VERSION || "1.0.0";
+	const versionArray = version.split(".");
+	return {
+		major: parseInt(versionArray[0]),
+		minor: parseInt(versionArray[1]),
+		patch: parseInt(versionArray[2]),
+	};
+};
 
-module.exports = { answer, isDatabase };
+// Get version in classifiable number
+const getVersionNumber = (version) => {
+	let number = 0;
+	if (typeof version === "number") number = version * 1000;
+	else if (typeof version === "string") {
+		version
+			.split(".")
+			.map((i) => (!isNaN(parseInt(version)) ? parseInt(i) : 0))
+			.forEach((i, key) => {
+				if (key === 0) number += i * 1000;
+				else if (key === 1) number += i * 100;
+				else number += i;
+			});
+		return number;
+	} else if (version) {
+		if (version.major) {
+			number += version.major * 1000;
+			if (version.minor) {
+				number += version.minor * 100;
+				if (version.patch) {
+					number += version.patch;
+				}
+			}
+		}
+	}
+	return number;
+};
+
+module.exports = { answer, getJDBVersion, getVersionNumber };
