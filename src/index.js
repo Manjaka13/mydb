@@ -1,10 +1,9 @@
 require("dotenv").config();
 const Express = require("express");
-//const fs = require("./filesystem");
-//const path = require("path");
 const cors = require("cors");
 const { port } = require("./helpers/const");
 const aboutRoute = require("./routes/aboutRoute");
+const databaseRoute = require("./routes/databaseRoute");
 const jdbRoute = require("./routes/jdbRoute");
 const versionMiddleware = require("./middlewares/versionMiddleware");
 const jsonerrorMiddleware = require("./middlewares/jsonerrorMiddleware");
@@ -25,6 +24,7 @@ app.use(jsonerrorMiddleware);
 app.use(versionMiddleware);
 // Mount routes
 app.use(aboutRoute.path, aboutRoute.router);
+app.use(databaseRoute.path, databaseRoute.router);
 app.use(jdbRoute.path, jdbRoute.router);
 app.use(notfoundMiddleware);
 

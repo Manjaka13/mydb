@@ -1,5 +1,5 @@
 const database = require("../interfaces/mysql");
-const { answer } = require("../utils");
+const { answer } = require("../helpers/utils");
 
 /*
 	Database controller
@@ -59,7 +59,7 @@ const databaseController = {
 		database
 			.insertInto(name, data)
 			.then((result) => {
-				res.json(answer(result, null, 1));
+				res.json(answer(`Data inserted in table [${name}]`, { id: result }, 1));
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},

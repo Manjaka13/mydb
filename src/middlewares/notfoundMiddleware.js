@@ -1,4 +1,4 @@
-const { answer } = require("../utils");
+const { answer } = require("../helpers/utils");
 
 // Handle 404 errors properly
 const notfoundMiddleware = (req, res) => {

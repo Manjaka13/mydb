@@ -1,4 +1,4 @@
-const { answer, getJDBVersion } = require("../utils");
+const { answer, getJDBVersion } = require("../helpers/utils");
 
 const aboutController = {
 	getVersion: (req, res) => res.json(answer("JDB version", getJDBVersion(), 1)),

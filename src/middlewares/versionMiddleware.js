@@ -1,4 +1,4 @@
-const { answer, getJDBVersion, getVersionNumber } = require("../utils");
+const { answer, getJDBVersion, getVersionNumber } = require("../helpers/utils");
 
 // Middleware for checking client's version
 const versionMiddleware = (req, res, next) => {

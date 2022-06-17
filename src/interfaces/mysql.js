@@ -30,7 +30,8 @@ const mysql = {
 	// Get list of existing tables in the database
 	getTables() {
 		return new Promise((resolve, reject) => {
-			this.request("SHOW TABLES")
+			mysql
+				.request("SHOW TABLES")
 				.then((result) => {
 					resolve(result.map((item) => item["Tables_in_jdb"]));
 				})
@@ -63,7 +64,8 @@ const mysql = {
 			else if (error) reject(error);
 			else {
 				request += ") ENGINE=INNODB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-				this.request(request)
+				mysql
+					.request(request)
 					.then(() => {
 						resolve(`Table [${tableName}] created`);
 					})
@@ -75,7 +77,8 @@ const mysql = {
 	// Drops table
 	dropTable(tableName) {
 		return new Promise((resolve, reject) => {
-			this.request(`DROP TABLE ${tableName};`)
+			mysql
+				.request(`DROP TABLE ${tableName};`)
 				.then(() => {
 					resolve(`Table [${tableName}] dropped`);
 				})
@@ -103,10 +106,10 @@ const mysql = {
 			if (props.length === 0) reject("Please provide data to insert");
 			else if (error) reject(error);
 			else {
-				// console.log(request);
-				this.request(request)
-					.then(() => {
-						resolve(`Data inserted in table [${tableName}]`);
+				mysql
+					.request(request)
+					.then((result) => {
+						resolve(result.insertId);
 					})
 					.catch((err) => reject(err));
 			}
@@ -116,7 +119,8 @@ const mysql = {
 	// Delete index in table
 	deleteFrom(tableName, id) {
 		return new Promise((resolve, reject) => {
-			this.request(`DELETE FROM ${tableName} WHERE id=${id};`)
+			mysql
+				.request(`DELETE FROM ${tableName} WHERE id=${id};`)
 				.then(() => {
 					resolve(`Deleted index [${id}] in [${tableName}]`);
 				})
@@ -127,7 +131,8 @@ const mysql = {
 	// Displays table data
 	getContent(tableName) {
 		return new Promise((resolve, reject) => {
-			this.request(`SELECT * FROM ${tableName};`)
+			mysql
+				.request(`SELECT * FROM ${tableName};`)
 				.then((result) => {
 					resolve(result);
 				})
@@ -152,7 +157,8 @@ const mysql = {
 			else if (error) reject(error);
 			else {
 				// console.log(request);
-				this.request(request)
+				mysql
+					.request(request)
 					.then(() => {
 						resolve(`Table ${tableName} data index [${id}] updated`);
 					})
