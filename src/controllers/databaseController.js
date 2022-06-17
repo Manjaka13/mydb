@@ -1,56 +1,102 @@
-const Database = require("../db.js");
+const database = require("../interfaces/mysql");
+const { answer } = require("../utils");
 
-// Init mysql
-const db = new Database();
+/*
+	Database controller
+*/
 
-const database = {
-	createDatabase: (name) => {
-		return new Promise((resolve, reject) => {
-			db
-				.connect()
-				.then(() => {
-					return db.request(`INSERT INTO db(name) VALUES ("${name}")`);
-				})
-				.then(() => {
-					resolve();
-				})
-				.catch((err) => reject(err.sqlMessage));
-		});
-	},
-	dropDatabase: (name) => {
-		return new Promise((resolve, reject) => {
-			db
-				.connect()
-				.then(() => {
-					return db.request(`DELETE FROM db WHERE name="${name}"`);
-				})
+const databaseController = {
+	// Run a request on a table
+	request(req, res) {
+		const { request } = req.body;
+		if (typeof request === "string" && request.length > 0)
+			database
+				.request(request)
 				.then((result) => {
-					console.log(result);
-					if (result.affectedRows <= 0)
-						reject(`Unable to drop unexisting database [${name}]`);
-					else resolve();
+					res.json(answer("Request result", result, 1));
 				})
-				.catch((err) => reject(err.sqlMessage));
-		});
+				.catch((err) => res.json(answer(err, null, 0)));
+		else res.json(answer("Please provide request string", null, 0));
 	},
-	listDatabase: () => {
-		return new Promise((resolve, reject) => {
-			db
-				.connect()
-				.then(() => {
-					return db.request(`SELECT * FROM db ORDER BY name`);
-				})
-				.then((result) => {
-					if (result) resolve(result.map(({ name }) => name));
-					else reject("Rejected !");
-				})
-				.catch((err) => reject(err.sqlMessage));
-		});
+
+	// Get list of existing tables in the database
+	getTables(req, res) {
+		database
+			.getTables()
+			.then((result) => {
+				res.json(answer("Tables list in JDB", result, 1));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	// Creates new table
+	createTable(req, res) {
+		const { fields } = req.body;
+		const { name } = req.params;
+		database
+			.createTable(name, fields)
+			.then((result) => {
+				res.json(answer(result, null, 1));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	// Drops table
+	dropTable(req, res) {
+		const { name } = req.params;
+		database
+			.dropTable(name)
+			.then((result) => {
+				res.json(answer(result, null, 1));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	// Inserts data into table
+	insertInto(req, res) {
+		const { data } = req.body;
+		const { name } = req.params;
+		database
+			.insertInto(name, data)
+			.then((result) => {
+				res.json(answer(result, null, 1));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	// Delete index in table
+	deleteFrom(req, res) {
+		const { name, id } = req.params;
+		database
+			.deleteFrom(name, typeof id === "string" ? parseInt(id) : id)
+			.then((result) => {
+				res.json(answer(result, null, 1));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	// Displays table data
+	getContent(req, res) {
+		const { name } = req.params;
+		database
+			.getContent(name)
+			.then((result) => {
+				res.json(answer("Table content", result, 1));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	// Displays table data
+	updateContent(req, res) {
+		const { data } = req.body;
+		const { name, id } = req.params;
+		database
+			.updateContent(name, typeof id === "string" ? parseInt(id) : id, data)
+			.then((result) => {
+				res.json(answer(result, null, 1));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
 	},
 };
 
-module.exports = {
-	createDatabase: database.createDatabase,
-	dropDatabase: database.dropDatabase,
-	listDatabase: database.listDatabase,
-};
+module.exports = databaseController;
