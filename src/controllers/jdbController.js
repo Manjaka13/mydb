@@ -6,6 +6,7 @@ const {
 	insertInto,
 	getContent,
 	deleteFrom,
+	updateContent,
 } = require("../interfaces/mysql");
 const { answer } = require("../helpers/utils");
 
@@ -32,7 +33,7 @@ const jdb = {
 	// Checks if a table contains a certain value
 	tableContains(table, str) {
 		return getContent(table).then((list) =>
-			list.map((item) => item.name).includes(str)
+			list.map((item) => item.id).includes(str)
 		);
 	},
 	// Checks if the app exists
@@ -51,18 +52,46 @@ const jdb = {
 	},
 
 	createApp(req, res) {
-		const { app } = req.params;
+		const { appName } = req.params;
 		jdb
 			.setupMainTables()
-			.then(() => jdb.appExists())
 			.then((appExists) => {
-				if (appExists) res.json(answer(`App [${app}] already exists`, null, 0));
+				if (appExists) res.json(answer(`App [${appName}] already exists`, null, 0));
 				else
-					insertInto("_db", { name: app })
-						.then(() => res.json(answer(`App [${app}] created`, null, 1)))
+					insertInto("_db", { name: appName })
+						.then((result) =>
+							res.json(answer(`App [${appName}] created`, { id: result }, 1))
+						)
 						.catch((err) => res.json(answer(err, null, 0)));
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	dropApp(req, res) {
+		const { app } = req.params;
+		request(`SELECT * FROM _table WHERE db = "${app}"`)
+			.then((list) => {
+				let promises = [];
+				list.forEach((item) => {
+					promises.push(
+						dropTable(item.id.split("-").join(""))
+							.then(() => deleteFrom("_table", item.id))
+							.catch((err) => res.json(answer(err, null, 0)))
+					);
+				});
+				Promise.all(promises)
+					.then(() => res.json(answer(`App [${app}] deleted`, null, 1)))
+					.catch((err) => res.json(answer(err, null, 0)));
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+
+		// deleteFrom("_db", app)
+		// 	.then(() => request(`SELECT * FROM _table WHERE db = "${app}"`))
+		// 	.then((list) => {
+		// 		console.log(list);
+		// 		res.json("helo");
+		// 	})
+		// 	.catch((err) => res.json(answer(err, null, 0)));
 	},
 
 	createAppTable(req, res) {
@@ -123,6 +152,64 @@ const jdb = {
 									)
 									.catch((err) => res.json(answer(err, null, 0)));
 							}
+						})
+						.catch((err) => res.json(answer(err, null, 0)));
+				}
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	pushAppTable(req, res) {
+		const { app, tableId } = req.params;
+		const { fields } = req.body;
+		jdb
+			.appExists(app)
+			.then((appExists) => {
+				if (!appExists) res.json(answer(`App [${app}] does not exist`, null, 0));
+				else {
+					jdb
+						.tableExistsId(tableId)
+						.then((tableExists) => {
+							if (tableExists) {
+								insertInto(tableId.split("-").join(""), fields)
+									.then((id) =>
+										res.json(answer(`Data pushed into index [${tableId}]`, id, 0))
+									)
+									.catch((err) => res.json(answer(err, null, 0)));
+							} else
+								res.json(answer(`Table index [${tableId}] does not exists`, null, 0));
+						})
+						.catch((err) => res.json(answer(err, null, 0)));
+				}
+			})
+			.catch((err) => res.json(answer(err, null, 0)));
+	},
+
+	updateAppTable(req, res) {
+		const { app, tableId, id } = req.params;
+		const { fields } = req.body;
+		jdb
+			.appExists(app)
+			.then((appExists) => {
+				if (!appExists) res.json(answer(`App [${app}] does not exist`, null, 0));
+				else {
+					jdb
+						.tableExistsId(tableId)
+						.then((tableExists) => {
+							if (tableExists) {
+								updateContent(tableId.split("-").join(""), id, fields)
+									.then(() =>
+										res.json(
+											answer(
+												`Data updated in index [${id}] of table [${tableId}]`,
+												null,
+												1
+											)
+										)
+									)
+									.catch((err) => res.json(answer(err, null, 0)));
+							} else
+								res.json(answer(`Table index [${tableId}] does not exists`, null, 0));
 						})
 						.catch((err) => res.json(answer(err, null, 0)));
 				}
