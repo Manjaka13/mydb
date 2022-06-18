@@ -1,5 +1,9 @@
 const router = require("express").Router();
-const { createApp, createAppTable } = require("../controllers/jdbController");
+const {
+	createApp,
+	createAppTable,
+	dropAppTable,
+} = require("../controllers/jdbController");
 
 /*
     JDB public API
@@ -7,5 +11,6 @@ const { createApp, createAppTable } = require("../controllers/jdbController");
 
 router.post("/create/:app", createApp);
 router.post("/create/:app/:table", createAppTable);
+router.delete("/drop/:app/:tableId", dropAppTable);
 
 module.exports = { path: "/", router };

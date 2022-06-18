@@ -68,7 +68,7 @@ const databaseController = {
 	deleteFrom(req, res) {
 		const { name, id } = req.params;
 		database
-			.deleteFrom(name, typeof id === "string" ? parseInt(id) : id)
+			.deleteFrom(name, id)
 			.then((result) => {
 				res.json(answer(result, null, 1));
 			})
@@ -91,7 +91,7 @@ const databaseController = {
 		const { data } = req.body;
 		const { name, id } = req.params;
 		database
-			.updateContent(name, typeof id === "string" ? parseInt(id) : id, data)
+			.updateContent(name, id, data)
 			.then((result) => {
 				res.json(answer(result, null, 1));
 			})

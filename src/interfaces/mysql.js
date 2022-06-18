@@ -1,5 +1,6 @@
 const { createConnection } = require("mysql");
 const { dbHost, dbUser, dbPassword, dbName } = require("../helpers/const");
+const { v4 } = require("uuid");
 
 /*
    MySQL database communication interface
@@ -43,7 +44,7 @@ const mysql = {
 	createTable(tableName, fields) {
 		return new Promise((resolve, reject) => {
 			let error = null;
-			let request = `CREATE TABLE ${tableName}(\n\tid INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,\n\t`;
+			let request = `CREATE TABLE ${tableName}(\n\tid CHAR(128) NOT NULL PRIMARY KEY,\n\t`;
 			const props = !fields ? [] : Object.keys(fields);
 			const values = !fields ? [] : Object.values(fields);
 			const types = {
@@ -90,13 +91,14 @@ const mysql = {
 	insertInto(tableName, data) {
 		return new Promise((resolve, reject) => {
 			let error = null;
-			let request = `INSERT INTO ${tableName}(`;
+			const id = v4();
+			let request = `INSERT INTO ${tableName}(id, `;
 			const props = !data ? [] : Object.keys(data);
 			const values = !data ? [] : Object.values(data);
 			for (let i = 0; i < props.length; i++) {
 				request += `${props[i]}`;
 				if (i < props.length - 1) request += ", ";
-				else request += ") VALUES (";
+				else request += `) VALUES ("${id}", `;
 			}
 			for (let i = 0; i < values.length; i++) {
 				request += `"${values[i]}"`;
@@ -108,8 +110,8 @@ const mysql = {
 			else {
 				mysql
 					.request(request)
-					.then((result) => {
-						resolve(result.insertId);
+					.then(() => {
+						resolve(id);
 					})
 					.catch((err) => reject(err));
 			}
@@ -120,7 +122,7 @@ const mysql = {
 	deleteFrom(tableName, id) {
 		return new Promise((resolve, reject) => {
 			mysql
-				.request(`DELETE FROM ${tableName} WHERE id=${id};`)
+				.request(`DELETE FROM ${tableName} WHERE id="${id}";`)
 				.then(() => {
 					resolve(`Deleted index [${id}] in [${tableName}]`);
 				})
@@ -150,9 +152,10 @@ const mysql = {
 			for (let i = 0; i < props.length; i++) {
 				request += `${props[i]} = "${values[i]}"`;
 				if (i < props.length - 1) request += ", ";
-				else request += ` WHERE id = ${id};`;
+				else request += ` WHERE id = "${id}";`;
 			}
-			if (typeof id != "number") reject("Please provide valid id to be updated");
+			if (typeof id != "string" && id.length > 0)
+				reject("Please provide valid id to be updated");
 			else if (props.length === 0) reject("Please provide new data to update");
 			else if (error) reject(error);
 			else {
