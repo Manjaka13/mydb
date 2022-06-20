@@ -1,6 +1,6 @@
 # JDB
 
-Backend service for a lightweigh minimalistic CMS.
+Backend service for a lightweight minimalistic CMS.
 
 ### Project setup
 
