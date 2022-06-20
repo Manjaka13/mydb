@@ -27,7 +27,6 @@ const mysql = {
 			});
 		});
 	},
-
 	// Get list of existing tables in the database
 	getTables() {
 		return new Promise((resolve, reject) => {
@@ -39,7 +38,6 @@ const mysql = {
 				.catch((err) => reject(err));
 		});
 	},
-
 	// Creates new table
 	createTable(tableName, fields) {
 		return new Promise((resolve, reject) => {
@@ -74,7 +72,6 @@ const mysql = {
 			}
 		});
 	},
-
 	// Drops table
 	dropTable(tableName) {
 		return new Promise((resolve, reject) => {
@@ -86,7 +83,6 @@ const mysql = {
 				.catch((err) => reject(err));
 		});
 	},
-
 	// Inserts data into table
 	insertInto(tableName, data) {
 		return new Promise((resolve, reject) => {
@@ -117,7 +113,6 @@ const mysql = {
 			}
 		});
 	},
-
 	// Delete index in table
 	deleteFrom(tableName, id) {
 		return new Promise((resolve, reject) => {
@@ -129,7 +124,6 @@ const mysql = {
 				.catch((err) => reject(err));
 		});
 	},
-
 	// Displays table data
 	getContent(tableName) {
 		return new Promise((resolve, reject) => {
@@ -141,7 +135,6 @@ const mysql = {
 				.catch((err) => reject(err));
 		});
 	},
-
 	// Displays table data
 	updateContent(tableName, id, newData) {
 		return new Promise((resolve, reject) => {
@@ -159,7 +152,6 @@ const mysql = {
 			else if (props.length === 0) reject("Please provide new data to update");
 			else if (error) reject(error);
 			else {
-				// console.log(request);
 				mysql
 					.request(request)
 					.then(() => {

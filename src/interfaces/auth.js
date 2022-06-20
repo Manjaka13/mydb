@@ -30,7 +30,6 @@ const auth = {
 			result.map((item) => item.email).includes(email)
 		);
 	},
-
 	// Creates new account
 	createAccount(email, password) {
 		return new Promise((resolve, reject) => {
@@ -57,15 +56,15 @@ const auth = {
 				.catch((err) => reject(err));
 		});
 	},
-
+	// Deletes account by its email
 	deleteAccount(email) {
 		return request(`DELETE FROM _account WHERE email = "${email}"`);
 	},
-
+	// Deletes account by its id
 	deleteAccountId(id) {
 		return deleteFrom("_account", id);
 	},
-
+	// Checks if provided credentials are correct
 	validateCredentials(email, password) {
 		return getContent("_account").then((result) => {
 			const account = result.filter((account) => account.email === email);
@@ -74,7 +73,7 @@ const auth = {
 				: null;
 		});
 	},
-
+	// Logs user in using email/password
 	login(email, password) {
 		return new Promise((resolve, reject) => {
 			auth
@@ -93,7 +92,7 @@ const auth = {
 				.catch((err) => reject(err));
 		});
 	},
-
+	// Verifies token
 	verify(token) {
 		return new Promise((resolve, reject) => {
 			if (!token) reject("Please provide a token");
@@ -105,7 +104,7 @@ const auth = {
 			}
 		});
 	},
-
+	// Logs user out
 	logout(res) {
 		res.clearCookie("token");
 		if (res?.locals?.user) delete res.locals.user;

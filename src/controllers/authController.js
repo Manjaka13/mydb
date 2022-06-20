@@ -7,7 +7,12 @@ const {
 	logout,
 } = require("../interfaces/auth");
 
+/*
+	Controller for authentication
+*/
+
 const authController = {
+	// Creates new account
 	createAccount(req, res) {
 		const { email, password } = req.body;
 		return createAccount(email, password)
@@ -17,18 +22,21 @@ const authController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
+	// Deletes existing account
 	deleteAccount(req, res) {
 		const { email } = req.body;
 		return deleteAccount(email)
 			.then(() => res.json(answer(`Account [${email}] deleted`, null, 1)))
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
+	// Deletes existing account using its id
 	deleteAccountId(req, res) {
 		const { id } = req.params;
 		return deleteAccountId(id)
 			.then(() => res.json(answer(`Account ID [${id}] deleted`, null, 1)))
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
+	// Login using email/password
 	login(req, res) {
 		const { email, password } = req.body;
 		login(email, password)
@@ -41,16 +49,11 @@ const authController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
+	// Logout
 	logout(req, res) {
 		logout(res);
 		res.json(answer("Login out successfull", null, 1));
 	},
 };
 
-module.exports = {
-	createAccount: authController.createAccount,
-	deleteAccount: authController.deleteAccount,
-	deleteAccountId: authController.deleteAccountId,
-	login: authController.login,
-	logout: authController.logout,
-};
+module.exports = authController;

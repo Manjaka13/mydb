@@ -9,7 +9,7 @@ const {
 const authMiddleware = require("../middlewares/authMiddleware");
 
 /*
-    Gets server informations
+    Authentication routes
 */
 
 router.post("/create", authMiddleware, createAccount);

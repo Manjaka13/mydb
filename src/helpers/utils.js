@@ -52,6 +52,7 @@ const getVersionNumber = (version) => {
 	return number;
 };
 
+// Checks if email is valid
 const isValidEmail = (email) => {
 	return (
 		typeof email === "string" &&

@@ -1,7 +1,7 @@
 const { answer } = require("../helpers/utils");
 const { verify } = require("../interfaces/auth");
 
-// Handle JSON errors properly
+// Protects secret routes
 const authMiddleware = (req, res, next) => {
 	const token = req.cookies.token;
 	verify(token)
@@ -9,7 +9,6 @@ const authMiddleware = (req, res, next) => {
 			if (typeof result === "string") res.json(answer(result, null, 0));
 			else {
 				res.locals.user = result;
-				console.log(result);
 				next();
 			}
 		})

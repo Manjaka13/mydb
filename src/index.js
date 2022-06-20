@@ -12,7 +12,7 @@ const jsonerrorMiddleware = require("./middlewares/jsonerrorMiddleware");
 const notfoundMiddleware = require("./middlewares/notfoundMiddleware");
 
 /*
-    Entry point
+    Server entry point
 */
 
 // Setup server
@@ -25,6 +25,7 @@ app.use(Express.urlencoded({ extended: true }));
 app.use(Express.json());
 app.use(jsonerrorMiddleware);
 app.use(versionMiddleware);
+
 // Mount routes
 app.use(aboutRoute.path, aboutRoute.router);
 app.use(databaseRoute.path, databaseRoute.router);

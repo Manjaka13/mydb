@@ -2,7 +2,7 @@ const database = require("../interfaces/mysql");
 const { answer } = require("../helpers/utils");
 
 /*
-	Database controller
+	Controller for direct database operations
 */
 
 const databaseController = {
@@ -18,7 +18,6 @@ const databaseController = {
 				.catch((err) => res.json(answer(err, null, 0)));
 		else res.json(answer("Please provide request string", null, 0));
 	},
-
 	// Get list of existing tables in the database
 	getTables(req, res) {
 		database
@@ -28,7 +27,6 @@ const databaseController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
 	// Creates new table
 	createTable(req, res) {
 		const { fields } = req.body;
@@ -40,7 +38,6 @@ const databaseController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
 	// Drops table
 	dropTable(req, res) {
 		const { name } = req.params;
@@ -51,7 +48,6 @@ const databaseController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
 	// Inserts data into table
 	insertInto(req, res) {
 		const { data } = req.body;
@@ -63,7 +59,6 @@ const databaseController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
 	// Delete index in table
 	deleteFrom(req, res) {
 		const { name, id } = req.params;
@@ -74,7 +69,6 @@ const databaseController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
 	// Displays table data
 	getContent(req, res) {
 		const { name } = req.params;
@@ -85,7 +79,6 @@ const databaseController = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
 	// Displays table data
 	updateContent(req, res) {
 		const { data } = req.body;

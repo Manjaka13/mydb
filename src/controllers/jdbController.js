@@ -11,7 +11,7 @@ const {
 const { answer } = require("../helpers/utils");
 
 /*
-    General JDB manipulations
+    Controller for JDB general manipulations
 */
 
 const jdb = {
@@ -50,7 +50,7 @@ const jdb = {
 			(result) => result.length > 0
 		);
 	},
-
+	// Creates new app
 	createApp(req, res) {
 		const { appName } = req.params;
 		jdb
@@ -66,7 +66,7 @@ const jdb = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
+	// Drops existing app
 	dropApp(req, res) {
 		const { app } = req.params;
 		request(`SELECT * FROM _table WHERE db = "${app}"`)
@@ -84,16 +84,8 @@ const jdb = {
 					.catch((err) => res.json(answer(err, null, 0)));
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
-
-		// deleteFrom("_db", app)
-		// 	.then(() => request(`SELECT * FROM _table WHERE db = "${app}"`))
-		// 	.then((list) => {
-		// 		console.log(list);
-		// 		res.json("helo");
-		// 	})
-		// 	.catch((err) => res.json(answer(err, null, 0)));
 	},
-
+	// Creates a table for an app
 	createAppTable(req, res) {
 		const { app, table } = req.params;
 		const { fields } = req.body;
@@ -131,7 +123,7 @@ const jdb = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
+	// Drops an app's table
 	dropAppTable(req, res) {
 		const { app, tableId } = req.params;
 		jdb
@@ -158,7 +150,7 @@ const jdb = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
+	// Pushes new data into app's table
 	pushAppTable(req, res) {
 		const { app, tableId } = req.params;
 		const { fields } = req.body;
@@ -184,7 +176,7 @@ const jdb = {
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
 	},
-
+	// Updates app's table content
 	updateAppTable(req, res) {
 		const { app, tableId, id } = req.params;
 		const { fields } = req.body;
