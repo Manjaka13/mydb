@@ -4,6 +4,7 @@ const {
 	deleteAccount,
 	deleteAccountId,
 	login,
+	logout,
 } = require("../interfaces/auth");
 
 const authController = {
@@ -30,12 +31,19 @@ const authController = {
 	},
 	login(req, res) {
 		const { email, password } = req.body;
-		return login(email, password)
-			.then((valid) => {
-				if (valid) res.json(answer(`Logged in as [${email}]`, null, 1));
-				else res.json(answer(`Incorrect email or password`, null, 0));
+		login(email, password)
+			.then((token) => {
+				if (token)
+					res
+						.cookie("token", token, { httpOnly: true })
+						.json(answer("Login successfull", { token }, 1));
+				else res.json(answer("Invalid email or password", null, 0));
 			})
 			.catch((err) => res.json(answer(err, null, 0)));
+	},
+	logout(req, res) {
+		logout(res);
+		res.json(answer("Login out successfull", null, 1));
 	},
 };
 
@@ -44,4 +52,5 @@ module.exports = {
 	deleteAccount: authController.deleteAccount,
 	deleteAccountId: authController.deleteAccountId,
 	login: authController.login,
+	logout: authController.logout,
 };

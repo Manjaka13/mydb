@@ -10,6 +10,7 @@ const {
 	deleteFrom,
 	request,
 } = require("./mysql");
+const res = require("express/lib/response");
 
 /*
     Authentication inteface
@@ -65,23 +66,49 @@ const auth = {
 		return deleteFrom("_account", id);
 	},
 
-	isValidCredentials(email, password) {
+	validateCredentials(email, password) {
 		return getContent("_account").then((result) => {
 			const account = result.filter((account) => account.email === email);
-			return account && account.length === 1 && account[0].password === password;
+			return account && account.length === 1 && account[0].password === password
+				? account[0].id
+				: null;
 		});
 	},
 
 	login(email, password) {
 		return new Promise((resolve, reject) => {
 			auth
-				.isValidCredentials(email, password)
-				.then((valid) => {
-					if (!valid) resolve(false);
-					else resolve(true);
+				.validateCredentials(email, password)
+				.then((id) => {
+					let token = null;
+					if (id) {
+						const payload = {
+							id,
+							email,
+						};
+						token = jwt.sign(payload, authSecret, { expiresIn: "1h" });
+					}
+					resolve(token);
 				})
 				.catch((err) => reject(err));
 		});
+	},
+
+	verify(token) {
+		return new Promise((resolve, reject) => {
+			if (!token) reject("Please provide a token");
+			else {
+				jwt.verify(token, authSecret, (err, decoded) => {
+					if (err) reject("Invalid token, please login");
+					else resolve(decoded);
+				});
+			}
+		});
+	},
+
+	logout(res) {
+		res.clearCookie("token");
+		if (res?.locals?.user) delete res.locals.user;
 	},
 };
 
