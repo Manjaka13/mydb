@@ -16,7 +16,7 @@ const { answer } = require("../helpers/utils");
 
 const jdb = {
 	// Creates necessary tables
-	setupMainTables(req, res) {
+	setupMainTables() {
 		return new Promise((resolve, reject) => {
 			getTables()
 				.then((result) => {

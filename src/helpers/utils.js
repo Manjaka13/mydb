@@ -52,4 +52,15 @@ const getVersionNumber = (version) => {
 	return number;
 };
 
-module.exports = { answer, getJDBVersion, getVersionNumber };
+const isValidEmail = (email) => {
+	return (
+		typeof email === "string" &&
+		email
+			.toLowerCase()
+			.match(
+				/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+			)
+	);
+};
+
+module.exports = { answer, getJDBVersion, getVersionNumber, isValidEmail };
