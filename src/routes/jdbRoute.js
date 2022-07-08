@@ -1,22 +1,12 @@
 const router = require("express").Router();
-const {
-	createApp,
-	dropApp,
-	createAppTable,
-	dropAppTable,
-	pushAppTable,
-	updateAppTable,
-} = require("../controllers/jdbController");
+const Jdb = require("../controllers/jdbController");
+const { isLoggedIn } = require("../middlewares/authMiddleware");
 
 /*
-    JDB public API
+	Authentication routes
 */
 
-router.post("/create/:appName", createApp);
-router.delete("/drop/:app", dropApp);
-router.post("/create/:app/:table", createAppTable);
-router.delete("/drop/:app/:tableId", dropAppTable);
-router.post("/push/:app/:tableId", pushAppTable);
-router.put("/update/:app/:tableId/:id", updateAppTable);
+router.post("/create", isLoggedIn, Jdb.create);
+router.delete("/drop", isLoggedIn, Jdb.drop);
 
 module.exports = { path: "/", router };
