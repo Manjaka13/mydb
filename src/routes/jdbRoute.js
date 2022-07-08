@@ -1,12 +1,14 @@
 const router = require("express").Router();
 const Jdb = require("../controllers/jdbController");
-const { isLoggedIn } = require("../middlewares/authMiddleware");
+const { isLoggedIn, isAdmin } = require("../middlewares/authMiddleware");
 
 /*
 	Authentication routes
 */
 
-router.post("/create", isLoggedIn, Jdb.create);
-router.delete("/drop", isLoggedIn, Jdb.drop);
+router.post("/create", isLoggedIn, isAdmin, Jdb.create);
+router.delete("/drop", isLoggedIn, isAdmin, Jdb.drop);
+router.post("/create/table/:name", isLoggedIn, isAdmin, Jdb.createTable);
+router.delete("/drop/table/:name", isLoggedIn, isAdmin, Jdb.dropTable);
 
 module.exports = { path: "/", router };

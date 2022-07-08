@@ -33,6 +33,14 @@ const isMaster = (req, res, next) => {
         res.json(failure("You need to be MASTER to access this route"));
 };
 
+// Protects routes from people that aren't MASTER or ADMIN
+const isAdmin = (req, res, next) => {
+    if (res.locals.user.level < 2)
+        next();
+    else
+        res.json(failure("You need to be admin to access this route"));
+};
+
 // Protects routes from unconfirmed accounts
 const isConfirmed = (req, res, next) => {
     if (res.locals.user.status === 1)
@@ -47,5 +55,6 @@ module.exports = {
     authMiddleware,
     isLoggedIn,
     isMaster,
-    isConfirmed
+    isConfirmed,
+    isAdmin
 };

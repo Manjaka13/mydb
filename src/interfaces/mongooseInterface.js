@@ -1,5 +1,6 @@
 const Mongoose = require("mongoose");
 const App = require("../models/appModel");
+const Collection = require("../models/collectionModel");
 const {
     databaseUrl,
     databaseName,
@@ -17,42 +18,23 @@ const mongoose = {
     connect: () => Mongoose.connect(`${databaseUrl}/${databaseName}`, { useNewUrlParser: true, useUnifiedTopology: true }),
 
     // Creates a schema from provided fields
-    createModel: (collectionName, fields) => new Promise((resolve, reject) => {
-        if (!collectionName)
-            reject("Please provide collection name");
-        else if (fields || Object.keys(fields).length === 0) {
-            let schema = {};
-            const keys = Object.keys(fields);
-            keys.forEach((field) => {
-                const type = fields[field].toLowerCase();
-                if (prohibitedFieldNames.includes(field.toLowerCase()))
-                    reject("You can not use prohibited field names");
-                else if (type === "string")
-                    schema[field] = {
-                        type: String,
-                    };
-                else if (type === "number")
-                    schema[field] = {
-                        type: Number,
-                    };
-                else
-                    reject("Unknown field type");
-            });
-            if (Object.keys(schema).length != keys.length)
-                reject("Schema creation failed");
-            else {
-                collectionName = collectionName.toLowerCase().split("");
-                collectionName[0] = collectionName[0].toUpperCase();
-                collectionName = collectionName.join("");
-                if (prohibitedCollectionNames.includes(collectionName))
-                    reject("This collection name is prohibited");
-                else
-                    resolve(Mongoose.model(collectionName, new Mongoose.Schema(schema)));
-            }
-        }
-        else
-            reject("Please provide valid fields and type");
-    }),
+    createModel: (id, fields) => {
+        let schema = {};
+        const keys = Object.keys(fields);
+        keys.forEach((field) => {
+            const type = fields[field].toLowerCase();
+            field = field.toLowerCase();
+            if (type === "string")
+                schema[field] = {
+                    type: String,
+                };
+            else if (type === "number")
+                schema[field] = {
+                    type: Number,
+                };
+        });
+        return Mongoose.model(id, new Mongoose.Schema(schema));
+    },
 
     // Creates app
     createApp: (app) => App.findOne({ app })
@@ -71,7 +53,41 @@ const mongoose = {
                 throw `Application ${app} does not exist`;
             else
                 return existingApp.deleteOne({ app });
+        }),
+
+    // Creates table
+    createTable: (app, name, fields) => App.findOne({ app })
+        .then((existingApp) => {
+            if (!existingApp)
+                throw `Application ${app} does not exist`;
+            else
+                return Collection.findOne({ name });
         })
+        .then((existingTable) => {
+            if (existingTable)
+                throw `Table ${name} already exists`;
+            else
+                return new Collection({
+                    app,
+                    name,
+                    fields: JSON.stringify(fields),
+                }).save()
+        }),
+
+    // Creates table
+    dropTable: (app, name) => Collection.find({ name })
+        .then((existingTable) => {
+            return existingTable ? existingTable.filter((table) => table.name === name) : null;
+        })
+        .then((table) => {
+            if (!table || table.length === 0)
+                throw `Table ${name} does not exist`;
+            else
+                return table[0].deleteOne();
+        }),
+
+
+
     /*
     // Finds the user that meets the specified fields
     findUser: (researchFields, app) => User.findOne({ ...researchFields, app })

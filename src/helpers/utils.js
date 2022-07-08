@@ -29,10 +29,18 @@ const isValidEmail = (email) => (
 // Format mongoose data
 const mongooseFormat = (data) => data ? ({ ...data._doc, id: data.id, _id: undefined }) : null;
 
+// Processes table name
+const processTableName = (name) => {
+	name = name.toLowerCase().split("");
+	name[0] = name[0].toUpperCase();
+	return name.join("");
+};
+
 module.exports = {
 	answer,
 	success,
 	failure,
 	isValidEmail,
-	mongooseFormat
+	mongooseFormat,
+	processTableName
 };

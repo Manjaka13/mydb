@@ -9,6 +9,10 @@ const collectionModel = new Mongoose.Schema({
         type: String,
         required: true
     },
+    name: {
+        type: String,
+        required: true
+    },
     fields: {
         type: String,
         required: true
@@ -17,4 +21,4 @@ const collectionModel = new Mongoose.Schema({
     timestamps: true
 });
 
-module.exports = Mongoose.model("App", collectionModel);
+module.exports = Mongoose.model("Collection", collectionModel);
