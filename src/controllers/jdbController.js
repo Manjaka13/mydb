@@ -63,6 +63,23 @@ const jdbController = {
 			.then(() => res.json(success("Table dropped")))
 			.catch(err => res.json(failure(err)));
 	},
+
+	// Insert data into table
+	insert: (req, res) => {
+		const app = res.locals.user.app;
+		let { name } = req.params;
+		const data = req.body;
+		name = processTableName(name);
+		if (!data || Object.keys(data).length === 0)
+			res.json(failure("Please provide data to be inserted"));
+		else
+			Jdb.insert(app, name, data)
+				.then((insertedData) => res.json(success("Data inserted", insertedData)))
+				.catch(err => {
+					console.log(err)
+					res.json(failure(err))
+				});
+	},
 };
 
 module.exports = jdbController;

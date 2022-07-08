@@ -15,7 +15,10 @@ const jdbInterface = {
     createTable: (app, name, fields) => database.createTable(app, name, fields),
 
     // Drops collection
-    dropTable: (app, name) => database.dropTable(app, name)
+    dropTable: (app, name) => database.dropTable(app, name),
+
+    // Inserts document
+    insert: (app, name, data) => database.insert(app, name, data)
 };
 
 module.exports = jdbInterface;

@@ -33,7 +33,7 @@ const mongoose = {
                     type: Number,
                 };
         });
-        return Mongoose.model(id, new Mongoose.Schema(schema));
+        return Mongoose.model(JSON.parse(JSON.stringify(id)), new Mongoose.Schema(schema));
     },
 
     // Creates app
@@ -77,13 +77,40 @@ const mongoose = {
     // Creates table
     dropTable: (app, name) => Collection.find({ name })
         .then((existingTable) => {
-            return existingTable ? existingTable.filter((table) => table.name === name) : null;
+            return existingTable ? existingTable.filter((table) => table.name === name && table.app === app) : null;
         })
         .then((table) => {
             if (!table || table.length === 0)
                 throw `Table ${name} does not exist`;
             else
                 return table[0].deleteOne();
+        }),
+
+    // Inserts data
+    insert: (app, name, data) => Collection.find({ name })
+        .then((existingTable) => {
+            return existingTable ? existingTable.filter((table) => table.name === name && table.app === app) : null;
+        })
+        .then((table) => {
+            if (!table || table.length === 0)
+                throw `Table ${name} does not exist`;
+            else
+                return { ...table[0]._doc };
+        })
+        .then((table) => {
+            table.fields = JSON.parse(table.fields);
+            const dataKeys = Object.keys(data);
+            const fieldKeys = Object.keys(table.fields);
+            let fieldsOk = 0;
+            for (let i = 0; i < fieldKeys.length; i++)
+                if (dataKeys.includes(fieldKeys[i]))
+                    fieldsOk++;
+            if (fieldsOk != fieldKeys.length)
+                throw "Data does not match provided colletion schema";
+            else {
+                const model = mongoose.createModel(table._id, table.fields);
+                return new model(data).save();
+            }
         }),
 
 
