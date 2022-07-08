@@ -1,10 +1,12 @@
 const { answer } = require("../helpers/utils");
+const { clientUrl } = require("../helpers/const");
 const {
 	createAccount,
 	deleteAccount,
 	deleteAccountId,
 	login,
 	logout,
+	verify
 } = require("../interfaces/auth");
 
 /*
@@ -42,7 +44,8 @@ const authController = {
 		login(email, password)
 			.then((token) => {
 				if (token)
-					res
+					res.setHeader("Access-Control-Allow-Origin", clientUrl)
+					.setHeader("Access-Control-Allow-Credentials", true)
 						.cookie("token", token, { httpOnly: true })
 						.json(answer("Login successfull", { token }, 1));
 				else res.json(answer("Invalid email or password", null, 0));
@@ -54,6 +57,17 @@ const authController = {
 		logout(res);
 		res.json(answer("Login out successfull", null, 1));
 	},
+	// Verifies token
+	verify(req, res) {
+		const authHeader = req.headers["Authorization"];
+		const token = authHeader && authHeader.split(" ")[1];
+		if(!token)
+			res.json(answer("No token provided", null, 0));
+		else
+			verify(token)
+				.then((user) => res.json(answer("Authenticated user", user, 1)))
+				.catch((err) => res.json(answer(err, null, 0)));
+	}
 };
 
 module.exports = authController;

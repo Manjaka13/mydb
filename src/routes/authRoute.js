@@ -5,6 +5,7 @@ const {
 	deleteAccountId,
 	login,
 	logout,
+	verify
 } = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -17,5 +18,6 @@ router.delete("/delete", authMiddleware, deleteAccount);
 router.delete("/delete/:id", authMiddleware, deleteAccountId);
 router.post("/login", login);
 router.post("/logout", logout);
+router.post("/verify", verify);
 
 module.exports = { path: "/account", router };

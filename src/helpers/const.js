@@ -11,6 +11,7 @@ const dbUser = process.env.DBUSER || "root";
 const dbPassword = process.env.DBPASSWORD || "";
 const dbName = process.env.DBNAME || "jdb";
 const authSecret = process.env.AUTHSECRET || v4();
+const clientUrl = process.env.CLIENTURL;
 
 module.exports = {
 	port,
@@ -20,4 +21,5 @@ module.exports = {
 	dbPassword,
 	dbName,
 	authSecret,
+	clientUrl
 };
