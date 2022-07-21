@@ -1,10 +1,10 @@
 const Mongoose = require("mongoose");
 
 /*
-    User model
+    App schema
 */
 
-const appModel = new Mongoose.Schema({
+const appSchema = new Mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -13,4 +13,4 @@ const appModel = new Mongoose.Schema({
     timestamps: true
 });
 
-module.exports = Mongoose.model("App", appModel);
+module.exports = appSchema;

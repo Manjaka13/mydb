@@ -1,8 +1,9 @@
 const Mongoose = require("mongoose");
-const App = require("../models/appModel");
-const Table = require("../models/tableModel");
+const App = require("../models/appSchema");
+const Table = require("../models/tableSchema");
 const { databaseUrl, databaseName } = require("../helpers/const");
 const { mongooseFormat } = require("../helpers/utils");
+const models = require("../models/");
 
 /*
 	Database manipulation through Mongoose
@@ -15,6 +16,31 @@ const mongoose = {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 		}),
+
+	// Finds one in a model
+	find: (model, searchFields) => model.findOne(searchFields),
+
+	// Find all in a model
+	findAll: (model, searchFields) => model.find(searchFields),
+
+	// Finds by id
+	findById: (model, id) => model.findById(id),
+
+	// Gets a table
+	getTable: (app, tableName) => models.Table.findOne({ app, name: tableName })
+		.then((table) => {
+			if (!table)
+				throw `Table ${tableName} does not exist`;
+			else
+				return table;
+		}),
+
+	// Removes a table
+	removeTable: (id) => Mongoose.connection.db.dropCollection(id),
+
+
+
+
 
 	// Creates app
 	createApp: (app) => App.findOne({ name: app })
@@ -40,16 +66,6 @@ const mongoose = {
 			else
 				return new Table({ app, name: table, fields }).save();
 		}),
-
-	// Gets table fields
-	getTable: (app, table) => Table.findOne({ app, name: table })
-		.then((data) => {
-			if (data)
-				return data;
-			else
-				throw `Table ${table} was not found`;
-		})
-		.then(mongooseFormat),
 
 	// Creates a schema from provided fields
 	createModel: (id, fields) => {

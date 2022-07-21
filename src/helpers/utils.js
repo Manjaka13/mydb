@@ -15,7 +15,7 @@ const answer = (caption, payload, status) => ({
 const failure = (err) => answer(err?._message ? err._message : typeof err === "string" ? err : "An error occured");
 
 // Returns good answer
-const success = (caption, payload) => answer(caption, payload, 1);
+const success = (caption, payload) => answer(caption, Array.isArray(payload) ? payload.map(mongooseFormat) : mongooseFormat(payload), 1);
 
 // Checks if email is valid
 const isValidEmail = (email) => (
