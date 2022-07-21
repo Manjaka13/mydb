@@ -5,7 +5,7 @@ const Mongoose = require("mongoose");
 */
 
 const appModel = new Mongoose.Schema({
-    app: {
+    name: {
         type: String,
         required: true
     },

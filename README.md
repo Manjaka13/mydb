@@ -1,4 +1,4 @@
-# JDB
+# Mydb
 
 Backend service for a lightweight minimalistic CMS.
 
@@ -11,14 +11,17 @@ npm install
 ### Start the project
 
 In the project directory, run the following command:
+
 ```
 npm start
 ```
+
 The server starts at [http://localhost:3002](http://localhost:3002)
 
 ### Run in development mode
 
 Runs the server in development mode
+
 ```
 npm run dev
 ```

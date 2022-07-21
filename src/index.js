@@ -2,8 +2,8 @@ require("dotenv").config();
 const Express = require("express");
 const cors = require("cors");
 const { port } = require("./helpers/const");
-const database = require("./interfaces/mongooseInterface");
-const jdbRoute = require("./routes/jdbRoute");
+const database = require("./services/mongoose");
+const mydb = require("./routes/mydb");
 const jsonerrorMiddleware = require("./middlewares/jsonerrorMiddleware");
 const notfoundMiddleware = require("./middlewares/notfoundMiddleware");
 const { authMiddleware } = require("./middlewares/authMiddleware");
@@ -23,15 +23,16 @@ app.use(jsonerrorMiddleware);
 app.use(authMiddleware);
 
 // Mount routes
-app.use(jdbRoute.path, jdbRoute.router);
+app.use(mydb.path, mydb.router);
 app.use(notfoundMiddleware);
 
 // Connects to database
-database.connect()
-    .then(() => {
-        // Awaiting for incoming request
-        app.listen(port, () => {
-            console.log(`JDB running on port ${port}`);
-        });
-    })
-    .catch(err => console.error(err));
+database
+	.connect()
+	.then(() => {
+		// Awaiting for incoming request
+		app.listen(port, () => {
+			console.log(`Mydb running on port ${port}`);
+		});
+	})
+	.catch((err) => console.error(err));

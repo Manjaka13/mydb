@@ -1,3 +1,4 @@
+const { restrictedFields, fieldTypes } = require("./const");
 /*
 	Various usefull functions
 */
@@ -27,14 +28,43 @@ const isValidEmail = (email) => (
 );
 
 // Format mongoose data
-const mongooseFormat = (data) => data ? ({ ...data._doc, id: data.id, _id: undefined }) : null;
+const mongooseFormat = (data) => data ? ({ ...data._doc, id: data.id, _id: undefined, __v: undefined, createdAt: undefined, updatedAt: undefined }) : null;
 
 // Processes table name
 const processTableName = (name) => {
-	name = name.toLowerCase().split("");
+	name = name.toLowerCase().trim().split("");
 	name[0] = name[0].toUpperCase();
 	return name.join("");
 };
+
+// Checks fields keys name
+const checkFields = (fields) => {
+	if (fields) {
+		const keys = Object.keys(fields);
+		if (keys.length > 0) {
+			for (let i = 0; i < keys.length; i++)
+				if (restrictedFields.includes(keys[i]) || !Object.keys(fieldTypes).includes(fields[keys[i]].toLowerCase()))
+					return false;
+			return true;
+		}
+	}
+	return false;
+};
+
+// Checks if provided data matches the table schema
+const checkData = (data, fields) => {
+	if (data) {
+		const fieldsKeys = Object.keys(fields);
+		const keys = Object.keys(data);
+		if (keys.length > 0) {
+			for (let i = 0; i < keys.length; i++)
+				if (!fieldsKeys.includes(keys[i]) || typeof data[keys[i]] != fields[keys[i]])
+					return false;
+			return true;
+		}
+	}
+	return false;
+}
 
 module.exports = {
 	answer,
@@ -42,5 +72,7 @@ module.exports = {
 	failure,
 	isValidEmail,
 	mongooseFormat,
-	processTableName
+	processTableName,
+	checkFields,
+	checkData
 };

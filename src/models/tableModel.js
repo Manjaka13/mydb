@@ -4,7 +4,7 @@ const Mongoose = require("mongoose");
     User model
 */
 
-const collectionModel = new Mongoose.Schema({
+const tableModel = new Mongoose.Schema({
     app: {
         type: String,
         required: true
@@ -21,4 +21,4 @@ const collectionModel = new Mongoose.Schema({
     timestamps: true
 });
 
-module.exports = Mongoose.model("Collection", collectionModel);
+module.exports = Mongoose.model("Table", tableModel);

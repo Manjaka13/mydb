@@ -10,19 +10,20 @@ const requestHeaders = {
 	Accept: "application/json",
 	"Content-Type": "application/json",
 };
-const prohibitedFieldNames = ["__v", "_id", "createdAt", "updatedAt"];
-const prohibitedCollectionNames = [
-	"Model", "Models",
-	"App", "Apps",
-	"Collection", "Collections"
+const restrictedFields = [
+	"_id", "__v", "createdAt", "updatedAt"
 ];
+const fieldTypes = {
+	"number": Number,
+	"string": String
+};
 
 module.exports = {
 	port,
 	databaseUrl,
 	databaseName,
-	prohibitedFieldNames,
-	prohibitedCollectionNames,
 	requestHeaders,
-	hauthUrl
+	hauthUrl,
+	restrictedFields,
+	fieldTypes
 };
